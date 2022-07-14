@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include "Window.h"
 int main(int, char**) {
-    std::cout << "Hello, world!\n";
+    Platform::Window mainWindow;
 }

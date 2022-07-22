@@ -29,5 +29,6 @@ namespace Platform::GUI
         class Win32Implementation;
         bool mReady = false;
         std::unique_ptr<Win32Implementation> mImplementation;
+        uint32_t counter = 0;
     };
 }

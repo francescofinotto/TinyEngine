@@ -12,12 +12,13 @@ namespace Platform::GUI
     public:
         /**
          * @brief Construct a new Win32 Implementation object
-         *
+         * @param container, winGUI pointer
          * @param title Text on top of the window
          */
-        Win32Implementation(std::string title = "TinyEngine")
+        Win32Implementation(WinGUI* container,std::string title = "TinyEngine")
             : mTitle(title), mInstance(GetModuleHandle(NULL)), mWndClassEx(GenWNDCLASSEX()), 
-                mMessgeHandlers(std::make_shared<std::unordered_map<unsigned int,MESSAGE_HANDLER>>())
+                mMessgeHandlers(std::make_shared<std::unordered_map<unsigned int,MESSAGE_HANDLER>>()),
+                mParent(container)
         {
             if (!RegisterClassEx(&mWndClassEx))
             {
@@ -27,6 +28,7 @@ namespace Platform::GUI
             {
                 throw std::runtime_error("Cannot create Window");
             }
+            SetTimer(mWindowHandle,NULL,1000/60,NULL);
             SetWindowText(mWindowHandle, mTitle.c_str());
         };
 
@@ -40,7 +42,9 @@ namespace Platform::GUI
 
         ~Win32Implementation()
         {
+            mParent = nullptr;
             DestroyWindow(mWindowHandle);
+            std::cout<<"Implementation destroied"<<std::endl;
         };
 
         void Run()
@@ -49,7 +53,7 @@ namespace Platform::GUI
 
             ShowWindow(static_cast<HWND>(mWindowHandle), SW_NORMAL);
             UpdateWindow(static_cast<HWND>(mWindowHandle));
-            // mEventHandler->OnAfterCreation();
+            mParent->OnAfterCreation();
 
             while (GetMessage(&msg, NULL, 0, 0))
             {
@@ -90,6 +94,7 @@ namespace Platform::GUI
             if (windowPtr != nullptr)
             {
                 windowPtr->MessageHandlingRoutine(windowMessage);
+                // windowPtr->mParent->OnUpdate();
             }
             return DefWindowProc(hwnd, windowMessage, wp, lp);
         };
@@ -136,11 +141,16 @@ namespace Platform::GUI
         HMODULE mInstance;
         WNDCLASSEX mWndClassEx;
         HWND mWindowHandle;
+        WinGUI* mParent;
     };
 
     WinGUI::WinGUI()
-        : mImplementation(std::make_unique<Win32Implementation>())
     {
+        OnCreation();
+        mImplementation = std::make_unique<Win32Implementation>(this,"titolone");
+        mImplementation->mMessgeHandlers->insert(std::make_pair<unsigned int,MESSAGE_HANDLER>(
+            WM_TIMER,[&](){this->OnUpdate();}
+        ));
         mReady = true;
     }
 
@@ -159,13 +169,16 @@ namespace Platform::GUI
 
     void WinGUI::OnAfterCreation()
     {
+        std::cout<<"After Creation"<<std::endl;
     }
 
     void WinGUI::OnUpdate()
     {
+        std::cout<<"On Update: "<<counter++<<std::endl;
     }
 
     void WinGUI::OnDestroy()
     {
+        std::cout<<"On Destroy"<<std::endl;
     }
 }

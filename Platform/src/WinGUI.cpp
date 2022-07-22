@@ -126,9 +126,10 @@ namespace Platform::GUI
             if (windowPtr != nullptr)
             {
                 windowPtr->MessageHandlingRoutine(windowMessage);
-                // windowPtr->mParent->OnUpdate();
+                if(windowMessage == WM_CLOSE){
+                    DestroyWindow(windowPtr->mWindowHandle);
+                }
             }
-
 
             return DefWindowProc(hwnd, windowMessage, wp, lp);
 

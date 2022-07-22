@@ -56,9 +56,9 @@ namespace Platform::GUI
         {
 
 
+            std::cout<<"Implementation destroied"<<std::endl;
             mParent = nullptr;
             DestroyWindow(mWindowHandle);
-            std::cout<<"Implementation destroied"<<std::endl;
 
 
         };
@@ -115,7 +115,7 @@ namespace Platform::GUI
                         return FALSE;
                 }
 
-                
+
             }
             else
             {

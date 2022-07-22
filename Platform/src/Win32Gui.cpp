@@ -4,22 +4,22 @@
 namespace Platform::GUI
 {
 
-    bool SetWindowInstanceToWindowLongPtr(Win32Gui *windowPtr, HWND &hwnd, LPARAM &lp)
-    {
-        auto temp = static_cast<Win32Gui *>(reinterpret_cast<CREATESTRUCT *>(lp)->lpCreateParams);
-        windowPtr = dynamic_cast<Win32Gui *>(temp);
-        if (!SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(windowPtr)))
-        {
-            return true;
-        }
-        return false;
-    };
-
     class Win32Gui::WindowImplementation
     {
     public:
         WindowImplementation() = default;
         ~WindowImplementation(){};
+        HWND windowHandler;
+        static bool SetWindowInstanceToWindowLongPtr(Win32Gui *windowPtr, HWND &hwnd, LPARAM &lp)
+        {
+            auto temp = static_cast<Win32Gui *>(reinterpret_cast<CREATESTRUCT *>(lp)->lpCreateParams);
+            windowPtr = dynamic_cast<Win32Gui *>(temp);
+            if (!SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(windowPtr)))
+            {
+                return true;
+            }
+            return false;
+        };
         /**
          * @brief Handle Messaging system
          *
@@ -27,7 +27,6 @@ namespace Platform::GUI
         static LRESULT CALLBACK MessageRoutine(HWND hwnd, UINT wm, WPARAM wp, LPARAM lp)
         {
             Win32Gui *windowPtr = nullptr;
-
             if (wm == WM_NCCREATE) // on creation set pointer to this window
             {
                 SetLastError(0);
@@ -50,13 +49,25 @@ namespace Platform::GUI
 
                 break;
 
-
             case WM_LBUTTONDOWN:
             {
                 int xPos = LOWORD(lp);
                 int yPos = HIWORD(lp);
+                SetCursor(LoadCursor(NULL,IDC_HAND));
                 // windowPtr->events.push_back(std::make_shared<MouseClickedEvent>(xPos, yPos, MouseEvent::LEFT));
                 break;
+            }
+            case WM_LBUTTONUP:
+            {
+                SetCursor(LoadCursor(NULL,IDC_NO));
+            }
+            case WM_MOUSEMOVE:{
+                SetCursor(LoadCursor(NULL,IDC_IBEAM));
+                return true;
+            }
+            case WM_SETCURSOR:
+            {
+                SetWindowLongPtr(hwnd, DWLP_MSGRESULT, TRUE);
             }
             case WM_COMMAND:
                 break;
@@ -82,10 +93,9 @@ namespace Platform::GUI
             }
             return DefWindowProc(hwnd, wm, wp, lp);
         }
-        HWND windowHandler;
     };
 
-    Win32Gui::Win32Gui(std::string title, std::unique_ptr<WindowEventHandler> eventHandler)
+    Win32Gui::Win32Gui(std::unique_ptr<WindowEventHandler> eventHandler, std::string title)
         : mTitle(title), mEventHandler(std::move(eventHandler)), mImplementation(std::make_unique<WindowImplementation>())
     {
         auto hInst = GetModuleHandle(NULL);
@@ -97,7 +107,7 @@ namespace Platform::GUI
         wc.cbWndExtra = 0;
         wc.hInstance = hInst;
         wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-        wc.hCursor = LoadCursor(NULL, IDC_CROSS);
+        wc.hCursor = LoadCursor(NULL, IDC_ARROW);
         wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
         wc.lpszMenuName = NULL;
         wc.lpszClassName = mTitle.c_str();
@@ -126,16 +136,22 @@ namespace Platform::GUI
         SetWindowText(static_cast<HWND>(mImplementation->windowHandler), mTitle.c_str());
     }
 
+
     Win32Gui::~Win32Gui()
     {
+ 
     }
+
 
     void Win32Gui::Run()
     {
         MSG msg;
+
         ShowWindow(static_cast<HWND>(mImplementation->windowHandler), SW_NORMAL);
         UpdateWindow(static_cast<HWND>(mImplementation->windowHandler));
+
         mEventHandler->OnAfterCreation();
+
         while (GetMessage(&msg, NULL, 0, 0))
         {
             TranslateMessage(&msg);

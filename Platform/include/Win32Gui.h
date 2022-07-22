@@ -1,6 +1,8 @@
 #pragma once
 #include <memory>
 #include <string>
+#include <map>
+#include <functional>
 namespace Platform::GUI
 {
 
@@ -18,6 +20,8 @@ namespace Platform::GUI
         virtual void OnUpdate() = 0;
         virtual void OnDestroy() = 0;
         virtual void OnResize(uint16_t width, uint16_t height) = 0;
+        // void AddMessageHandler(uint16_t message,)
+    private:
     };
 
     /**
@@ -26,15 +30,15 @@ namespace Platform::GUI
     class Win32Gui
     {
     public:
-        Win32Gui(std::string title, std::unique_ptr<WindowEventHandler> eventHandler);
+        Win32Gui(std::unique_ptr<WindowEventHandler> eventHandler, std::string title = std::string("Tiny Engine"));
         ~Win32Gui();
-        void Run();
+        virtual void Run();
 
     private:
         class WindowImplementation;
         std::unique_ptr<WindowImplementation> mImplementation;
         std::unique_ptr<WindowEventHandler> mEventHandler;
         std::string mTitle;
-    };
+    }; 
 
 }

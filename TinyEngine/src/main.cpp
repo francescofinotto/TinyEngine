@@ -1,5 +1,5 @@
 #include <iostream>
-#include "WinGLGUI.h"
+#include "WindowsGUI.h"
 #include <memory>
 // class WinEvents : public Platform::GUI::WindowEventHandler
 // {
@@ -17,7 +17,7 @@ int main(int, char **)
 {
     try
     {
-        Platform::GUI::WinGLGUI window;
+        Platform::GUI::WindowsGUI window;
         window.Run();
     }
     catch (std::exception exc)

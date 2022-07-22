@@ -20,35 +20,53 @@ namespace Platform::GUI
                 mMessgeHandlers(std::make_shared<std::unordered_map<unsigned int,MESSAGE_HANDLER>>()),
                 mParent(container)
         {
+
+
             if (!RegisterClassEx(&mWndClassEx))
             {
                 throw std::runtime_error("Cannot Register Window Class");
             }
+
+
             if ((mWindowHandle = CreateWindowGetHandler()) == nullptr)
             {
                 throw std::runtime_error("Cannot create Window");
             }
+
+
             SetTimer(mWindowHandle,NULL,1000/60,NULL);
             SetWindowText(mWindowHandle, mTitle.c_str());
+
+
         };
 
         void MessageHandlingRoutine(const unsigned int message){
+
+
             auto value = mMessgeHandlers->find(static_cast<unsigned int>(message));
             if (value != mMessgeHandlers->end())
             {
                 value->second();
             }
+
+
         }
 
         ~Win32Implementation()
         {
+
+
             mParent = nullptr;
             DestroyWindow(mWindowHandle);
             std::cout<<"Implementation destroied"<<std::endl;
+
+
         };
 
         void Run()
         {
+
+
             MSG msg;
 
             ShowWindow(static_cast<HWND>(mWindowHandle), SW_NORMAL);
@@ -60,11 +78,15 @@ namespace Platform::GUI
                 TranslateMessage(&msg);
                 DispatchMessage(&msg);
             }
+
+
         }
 
 
         static bool SetWindowInstanceToWindowLongPtr(Win32Implementation *windowPtr, HWND &hwnd, LPARAM &lp)
         {
+
+
             auto temp = static_cast<Win32Implementation *>(reinterpret_cast<CREATESTRUCT *>(lp)->lpCreateParams);
             windowPtr = dynamic_cast<Win32Implementation *>(temp);
             if (!SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(windowPtr)))
@@ -72,31 +94,45 @@ namespace Platform::GUI
                 return true;
             }
             return false;
+
+
         };
 
 
         static LRESULT CALLBACK MessageRoutine(HWND hwnd, UINT windowMessage, WPARAM wp, LPARAM lp)
         {
+
+
             Win32Implementation *windowPtr = nullptr;
             if (windowMessage == WM_NCCREATE)
             {
+
+
                 SetLastError(0);
                 if (!SetWindowInstanceToWindowLongPtr(windowPtr, hwnd, lp))
                 {
                     if (GetLastError() != 0)
                         return FALSE;
                 }
+
+                
             }
             else
             {
                 windowPtr = reinterpret_cast<Win32Implementation *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
             }
+
+
             if (windowPtr != nullptr)
             {
                 windowPtr->MessageHandlingRoutine(windowMessage);
                 // windowPtr->mParent->OnUpdate();
             }
+
+
             return DefWindowProc(hwnd, windowMessage, wp, lp);
+
+
         };
 
 
@@ -144,6 +180,13 @@ namespace Platform::GUI
         WinGUI* mParent;
     };
 
+
+
+
+
+
+
+
     WinGUI::WinGUI()
     {
         OnCreation();
@@ -157,6 +200,9 @@ namespace Platform::GUI
     WinGUI::~WinGUI()
     {
     }
+
+
+
 
     void WinGUI::Run()
     {

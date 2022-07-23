@@ -11,7 +11,7 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 find_package(OpenGL REQUIRED)
 target_include_directories(${PROJECT_NAME} INTERFACE include)
-target_link_libraries(${PROJECT_NAME} PRIVATE opengl32.lib TinyEngineWindows TinyEnginePlatform)
+target_link_libraries(${PROJECT_NAME} PRIVATE opengl32.lib PUBLIC TinyEngineWindows PUBLIC TinyEnginePlatform)
 
 
 

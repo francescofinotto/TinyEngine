@@ -8,7 +8,7 @@ src/*.c
 
 add_library(${PROJECT_NAME} STATIC ${PlatformFiles})
 
-target_include_directories(${PROJECT_NAME} INTERFACE ${PROJECT_SOURCE_DIR}include include/glad ${PROJECT_SOURCE_DIR}include/KHR)
+target_include_directories(${PROJECT_NAME} PUBLIC include PRIVATE include/glad PRIVATE include/KHR)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE opengl32.lib)
 

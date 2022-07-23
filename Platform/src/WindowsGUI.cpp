@@ -82,10 +82,19 @@ namespace Platform::GUI
                 // Get implementation from GWLP_USERDATA
                 impl = reinterpret_cast<Implementation *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
             }
+
+
             if (impl != nullptr)
             {
                 // Handle Code after implementation is set
+                auto handler = impl->mMessageHandlers.find(windowMessage);
+                if(handler!= impl->mMessageHandlers.end())
+                {
+                    handler->second();
+                }
             }
+
+
             if(windowMessage == WM_CLOSE)
                 PostQuitMessage(0);
             if(windowMessage == WM_DESTROY)

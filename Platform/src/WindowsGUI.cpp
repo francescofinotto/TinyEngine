@@ -33,7 +33,7 @@ namespace Platform::GUI
 
             ShowWindow(static_cast<HWND>(mWindowsHandler), SW_NORMAL);
             UpdateWindow(static_cast<HWND>(mWindowsHandler));
-
+            mContainer->OnAfterCreation();
             while (GetMessage(&msg, NULL, 0, 0))
             {
                 TranslateMessage(&msg);
@@ -52,7 +52,6 @@ namespace Platform::GUI
             this->mMessageHandlers.erase(message);
         };
 
-    private:
         static bool SetWindowInstanceToWindowLongPtr(Implementation *windowPtr, HWND &hwnd, LPARAM &lp)
         {
 
@@ -96,7 +95,11 @@ namespace Platform::GUI
 
 
             if(windowMessage == WM_CLOSE)
+            {
+                impl->mContainer->OnDestroy();
                 PostQuitMessage(0);
+
+            }
             if(windowMessage == WM_DESTROY)
             {
                 return false;
@@ -190,6 +193,9 @@ namespace Platform::GUI
     {
         mImplementation->RemoveMessageHandler(message);
     };
-
+    void* WindowsGUI::GetWindowHandler()
+    {
+        return static_cast<void*>(mImplementation->mWindowsHandler);
+    }
 #pragma endregion
 }

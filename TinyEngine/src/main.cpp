@@ -1,5 +1,5 @@
 #include <iostream>
-#include "WindowsGUI.h"
+#include "WindowsOpenGLGUI.h"
 #include <memory>
 // class WinEvents : public Platform::GUI::WindowEventHandler
 // {
@@ -19,7 +19,7 @@ int main(int, char **)
 {
     try
     {
-        Platform::GUI::WindowsGUI window;
+        Platform::GUI::WindowsOpenGLGUI window;
         window.AddMessageHandler(MOUSE_LEFT_BUTTON_DOWN,[&](){
             
         });

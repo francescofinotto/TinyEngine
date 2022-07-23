@@ -18,16 +18,16 @@ namespace Platform::GUI
         virtual void OnAfterCreation();
         virtual void OnDestroy();
         void Run();
-        
         void AddMessageHandler(uint16_t message,MESSAGE_HANDLER);
         void RemoveMessageHandler(uint16_t message);
-
+    protected:
+        void* GetWindowHandler();
     private:
         
         class Implementation;
         std::unique_ptr<Implementation> mImplementation;
 
     };
-
+    
 
 }

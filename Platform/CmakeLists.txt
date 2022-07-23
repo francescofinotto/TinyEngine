@@ -8,7 +8,8 @@ src/*.cpp
 add_library(${PROJECT_NAME} STATIC ${PlatformFiles})
 
 target_include_directories(${PROJECT_NAME} INTERFACE include)
-
+find_package(OpenGL REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE opengl32.lib)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})

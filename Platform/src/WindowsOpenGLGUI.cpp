@@ -43,7 +43,6 @@ namespace Platform::GUI
 		mGlContext = static_cast<void*>(wglCreateContext(deviceContext));
 		SetTimer(static_cast<HWND>(this->GetWindowHandler()), 1001,(UINT)(1.0f/60),(TIMERPROC) NULL);
 		this->AddMessageHandler(WM_TIMER,[&](){
-			std::cout<<"On Renderd"<<std::endl;
 			OnRender();
 		});
     }

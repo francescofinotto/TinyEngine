@@ -4,6 +4,7 @@ project(TinyEngine VERSION 0.0.1)
 
 add_subdirectory(TinyEngine)
 add_subdirectory(Platform)
+add_subdirectory(Engine/Windows)
 add_definitions(-DWIN32)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})

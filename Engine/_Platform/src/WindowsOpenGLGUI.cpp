@@ -48,8 +48,7 @@ namespace Platform::GUI
     }
 	void WindowsOpenGLGUI::OnRender()
     {
-		HDC deviceContext = GetDC(reinterpret_cast<HWND>(this->GetWindowHandler()));
-		wglMakeCurrent(deviceContext,reinterpret_cast<HGLRC>(mGlContext));
+		MakeCurrent();
 		glClearColor(0, 0, 1, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 		Swap();
@@ -63,4 +62,9 @@ namespace Platform::GUI
 		HDC deviceContext = GetDC(reinterpret_cast<HWND>(this->GetWindowHandler()));
 		SwapBuffers(deviceContext);
 	}
+	void WindowsOpenGLGUI::MakeCurrent()
+    {
+        HDC deviceContext = GetDC(reinterpret_cast<HWND>(this->GetWindowHandler()));
+		wglMakeCurrent(deviceContext,reinterpret_cast<HGLRC>(mGlContext));
+    }
 } // namespace Platform::GUI

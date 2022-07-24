@@ -1,3 +1,6 @@
 #pragma once
 
-void Initialize();
+namespace Platform::Win
+{
+    void Initialize();
+}

@@ -9,13 +9,15 @@ namespace Platform::GUI
         ~WindowsOpenGLGUI();
         virtual void OnAfterCreation() override;
         virtual void OnDestroy() override;
+        void Swap();
+        void MakeCurrent();
         typedef void* GL_CONTEXT;
     protected:
         virtual void OnRender();
     private:
-        void Swap();
         GL_CONTEXT mGlContext;
 
-    };       
+    };
+           
 
 } 

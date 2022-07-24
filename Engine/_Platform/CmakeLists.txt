@@ -8,5 +8,5 @@ add_library(${PROJECT_NAME} STATIC ${PlatformFiles})
 
 target_include_directories(${PROJECT_NAME} INTERFACE include)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE opengl32.lib)
+target_link_libraries(${PROJECT_NAME} PRIVATE opengl32.lib TinyEngineWindows)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)

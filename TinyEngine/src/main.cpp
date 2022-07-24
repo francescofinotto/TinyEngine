@@ -9,7 +9,8 @@ int main(int, char **)
     try
     {
         Game::Game window;
-                }
+        window.Run();
+    }
     catch (std::exception exc)
     {
         std::cout << exc.what() << std::endl;

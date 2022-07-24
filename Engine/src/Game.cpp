@@ -5,12 +5,15 @@ namespace Game
 {
     Game::Game()
     {
-        Platform::GUI::WindowsOpenGLGUI window{};
-        window.MakeCurrent();
-        //Platform::Win::Initialize();
-        window.Run();
+
     }
     Game::~Game()
     {
+    }
+    void Game::OnAfterCreation()
+    {
+        WindowsOpenGLGUI::OnAfterCreation();
+        MakeCurrent();
+        Platform::Win::Initialize();
     }
 }

@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <GL/gl.h>
 #include "../include/WindowsOpenGLGUI.h"
+#include "EngineOpenGL.h"
 namespace Platform::GUI
 {
 
@@ -40,7 +41,6 @@ namespace Platform::GUI
 		letWindowsChooseThisPixelFormat = ChoosePixelFormat(deviceContext, &pfd);
 		SetPixelFormat(deviceContext, letWindowsChooseThisPixelFormat, &pfd);
 		mGlContext = static_cast<void *>(wglCreateContext(deviceContext));
-
 		SetTimer(static_cast<HWND>(this->GetWindowHandler()), 1001, (UINT)(1.0f / 30), (TIMERPROC)NULL);
 		SetupMessageHandlers();
 	}

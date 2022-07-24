@@ -89,7 +89,7 @@ namespace Platform::GUI
                 auto handler = impl->mMessageHandlers.find(windowMessage);
                 if(handler!= impl->mMessageHandlers.end())
                 {
-                    handler->second();
+                    handler->second(reinterpret_cast<void*>(wp),reinterpret_cast<void*>(lp));
                 }
             }
 

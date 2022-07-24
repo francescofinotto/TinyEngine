@@ -7,7 +7,7 @@ namespace Game
     {
         Platform::GUI::WindowsOpenGLGUI window{};
         window.MakeCurrent();
-        Platform::Win::Initialize();
+        // Platform::Win::Initialize();
         window.Run();
     }
     Game::~Game()

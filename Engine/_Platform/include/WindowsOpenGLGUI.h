@@ -14,10 +14,10 @@ namespace Platform::GUI
         typedef void* GL_CONTEXT;
     protected:
         virtual void OnRender();
+        virtual void OnResize(void* wp,void* lp);
     private:
         GL_CONTEXT mGlContext;
 
-    };
-           
+    };       
 
 } 

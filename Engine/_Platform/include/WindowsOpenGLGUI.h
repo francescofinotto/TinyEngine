@@ -15,6 +15,7 @@ namespace Platform::GUI
     protected:
         virtual void OnRender();
         virtual void OnResize(void* wp,void* lp);
+        void SetupMessageHandlers();
     private:
         GL_CONTEXT mGlContext;
 

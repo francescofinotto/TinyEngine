@@ -9,16 +9,6 @@ namespace Platform::GUI
 
 	WindowsOpenGLGUI::WindowsOpenGLGUI()
 	{
-	}
-
-	WindowsOpenGLGUI::~WindowsOpenGLGUI()
-	{
-		isRunning = false;
-		renderThread.join();
-	}
-
-	void WindowsOpenGLGUI::OnAfterCreation()
-	{
 		PIXELFORMATDESCRIPTOR pfd =
 			{
 				sizeof(PIXELFORMATDESCRIPTOR),
@@ -48,6 +38,44 @@ namespace Platform::GUI
 		//SetTimer(static_cast<HWND>(this->GetWindowHandler()), 1001, (UINT)(1.0f / 60), (TIMERPROC)NULL);
 		SetupMessageHandlers();
 	}
+
+	WindowsOpenGLGUI::~WindowsOpenGLGUI()
+	{
+		isRunning = false;
+		renderThread.join();
+	}
+
+	void WindowsOpenGLGUI::OnAfterCreation()
+	{
+		// PIXELFORMATDESCRIPTOR pfd =
+		// 	{
+		// 		sizeof(PIXELFORMATDESCRIPTOR),
+		// 		1,
+		// 		PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER, // Flags
+		// 		PFD_TYPE_RGBA,												// The kind of framebuffer. RGBA or palette.
+		// 		32,															// Colordepth of the framebuffer.
+		// 		0, 0, 0, 0, 0, 0,
+		// 		0,
+		// 		0,
+		// 		0,
+		// 		0, 0, 0, 0,
+		// 		24, // Number of bits for the depthbuffer
+		// 		8,	// Number of bits for the stencilbuffer
+		// 		0,	// Number of Aux buffers in the framebuffer.
+		// 		PFD_MAIN_PLANE,
+		// 		0,
+		// 		0, 0, 0};
+
+		// HDC hdc = GetDC(reinterpret_cast<HWND>(this->GetWindowHandler()));
+
+		// int letWindowsChooseThisPixelFormat;
+		// letWindowsChooseThisPixelFormat = ChoosePixelFormat(hdc, &pfd);
+		// SetPixelFormat(hdc, letWindowsChooseThisPixelFormat, &pfd);
+		// mGlContext = static_cast<void *>(wglCreateContext(hdc));
+		// ReleaseDC(reinterpret_cast<HWND>(this->GetWindowHandler()),hdc);
+		// //SetTimer(static_cast<HWND>(this->GetWindowHandler()), 1001, (UINT)(1.0f / 60), (TIMERPROC)NULL);
+		// SetupMessageHandlers();
+	}
 	void WindowsOpenGLGUI::Run()
     {
 
@@ -60,7 +88,7 @@ namespace Platform::GUI
 					MakeCurrent();
 					OnRender();
 					Swap();
-					std::this_thread::sleep_for(std::chrono::duration<float,std::milli>(100));
+					std::this_thread::sleep_for(std::chrono::duration<float,std::milli>(10));
 				}
 				std::cout << "Thread end" << std::endl;
 			});

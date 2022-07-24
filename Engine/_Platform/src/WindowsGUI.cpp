@@ -33,7 +33,7 @@ namespace Platform::GUI
 
             ShowWindow(static_cast<HWND>(mWindowsHandler), SW_NORMAL);
             UpdateWindow(static_cast<HWND>(mWindowsHandler));
-            mContainer->OnAfterCreation();
+            // mContainer->OnAfterCreation();
             while (GetMessage(&msg, NULL, 0, 0))
             {
                 TranslateMessage(&msg);

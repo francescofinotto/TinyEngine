@@ -1,4 +1,6 @@
 #pragma once
+#include <thread>
+#include <memory>
 #include "WindowsGUI.h"
 namespace Platform::GUI
 {
@@ -9,6 +11,7 @@ namespace Platform::GUI
         ~WindowsOpenGLGUI();
         virtual void OnAfterCreation() override;
         virtual void OnDestroy() override;
+        virtual void Run() override;
         void Swap();
         void MakeCurrent();
         typedef void* GL_CONTEXT;
@@ -18,7 +21,9 @@ namespace Platform::GUI
         void SetupMessageHandlers();
     private:
         GL_CONTEXT mGlContext;
-
-    };       
+        std::thread renderThread;
+        bool isRunning = true;
+    };
+           
 
 } 

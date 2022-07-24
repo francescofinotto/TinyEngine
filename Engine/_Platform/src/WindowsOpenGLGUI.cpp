@@ -44,21 +44,28 @@ namespace Platform::GUI
 		SetTimer(static_cast<HWND>(this->GetWindowHandler()), 1001, (UINT)(1.0f / 30), (TIMERPROC)NULL);
 		SetupMessageHandlers();
 	}
-	float rotation = 0;
 	void WindowsOpenGLGUI::OnRender()
 	{
+		static float rotation = 90;
 		MakeCurrent();
 		glClearColor(0, 0, 1, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		glBegin(GL_TRIANGLES);
 		glRotatef(rotation, 0, 1, 0);
 		rotation += 1;
+		
+		glBegin(GL_TRIANGLES);
 		glVertex2f(-0.5f, -0.5f);
+		glColor3f(1.0f,0.0f,0.0f);
 		glVertex2f(0.0f, .5f);
+		glColor3f(0.0f,1.0f,0.0f);
 		glVertex2f(0.5f, -0.5f);
+		glColor3f(0.0f, 0.0f, 1.0f);
 		glEnd();
+
 		Swap();
 	}
 	void WindowsOpenGLGUI::SetupMessageHandlers()

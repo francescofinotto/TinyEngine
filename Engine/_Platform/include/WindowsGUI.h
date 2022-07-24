@@ -10,7 +10,7 @@ namespace Platform::GUI
     {
     public:
 
-        typedef std::function<void(void)> MESSAGE_HANDLER;
+        typedef std::function<void( void*, void*)> MESSAGE_HANDLER;
 
         WindowsGUI();
         ~WindowsGUI();

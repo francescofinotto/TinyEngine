@@ -1,0 +1,12 @@
+cmake_minimum_required(VERSION 3.0.0)
+project(TinyEngineCommon VERSION 0.1.0)
+
+file(GLOB PlatformFiles
+src/*.cpp
+)
+
+add_library(${PROJECT_NAME} STATIC ${PlatformFiles})
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
+
+target_include_directories(${PROJECT_NAME} INTERFACE include)

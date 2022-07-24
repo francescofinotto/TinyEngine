@@ -15,6 +15,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE opengl32.lib PUBLIC TinyEngineWind
 
 
 
+add_subdirectory(_Common)
 add_subdirectory(_Platform)
 add_subdirectory(_Windows)
 

@@ -1,6 +1,3 @@
-#ifndef SHADER_H
-#define SHADER_H
-
 #pragma once
 
 class Shader
@@ -12,5 +9,3 @@ public:
 private:
 
 };
-
-#endif

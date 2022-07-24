@@ -33,7 +33,7 @@ namespace Platform::GUI
 
             ShowWindow(static_cast<HWND>(mWindowsHandler), SW_NORMAL);
             UpdateWindow(static_cast<HWND>(mWindowsHandler));
-            mContainer->OnAfterCreation();
+            // mContainer->OnAfterCreation();
             while (GetMessage(&msg, NULL, 0, 0))
             {
                 TranslateMessage(&msg);
@@ -86,7 +86,7 @@ namespace Platform::GUI
             if (impl != nullptr)
             {
                 // Handle Code after implementation is set
-                auto handler = impl->mMessageHandlers.find(windowMessage);
+                auto& handler = impl->mMessageHandlers.find(windowMessage);
                 if(handler!= impl->mMessageHandlers.end())
                 {
                     handler->second(reinterpret_cast<void*>(wp),reinterpret_cast<void*>(lp));

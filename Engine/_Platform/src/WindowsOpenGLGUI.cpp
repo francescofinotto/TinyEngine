@@ -148,6 +148,7 @@ namespace Platform::GUI
         std::lock_guard<std::mutex> lock{mutexContext};
 		MakeCurrent();
 		callback();
+		wglMakeCurrent(nullptr,nullptr);
     }
 	void WindowsOpenGLGUI::OnResize(void *wp, void *lp)
 	{

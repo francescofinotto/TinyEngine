@@ -64,18 +64,27 @@ namespace Platform::GUI
 	void WindowsOpenGLGUI::SetupMessageHandlers()
 	{
 		this->AddMessageHandler(WM_TIMER, [&](void *wp, void *lp)
-								{ RedrawWindow(reinterpret_cast<HWND>(this->GetWindowHandler()), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW); });
+								{
+									RedrawWindow(reinterpret_cast<HWND>(this->GetWindowHandler()), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+								});
+
 		this->AddMessageHandler(WM_SIZE, [&](void *wp, void *lp)
-								{ OnResize(wp, lp); });
+								{
+									OnResize(wp, lp);
+								});
+
 		this->AddMessageHandler(WM_PAINT, [&](void *wp, void *lp)
-								{ 
+								{
 									HDC hdc = GetDC(reinterpret_cast<HWND>(this->GetWindowHandler()));
 									PAINTSTRUCT ps;
-									hdc = BeginPaint(reinterpret_cast<HWND>(this->GetWindowHandler()),&ps);
-									OnRender(); 
-									EndPaint(reinterpret_cast<HWND>(this->GetWindowHandler()),&ps); });
+									hdc = BeginPaint(reinterpret_cast<HWND>(this->GetWindowHandler()), &ps);
+									OnRender();
+									EndPaint(reinterpret_cast<HWND>(this->GetWindowHandler()), &ps);
+								});
 		this->AddMessageHandler(WM_SIZE, [&](void *wp, void *lp)
-								{ OnResize(wp, lp); });
+								{
+									OnResize(wp, lp);
+								});
 	}
 	void WindowsOpenGLGUI::OnDestroy()
 	{

@@ -1,5 +1,6 @@
 #pragma once
 #include <thread>
+#include <mutex>
 #include <memory>
 #include "WindowsGUI.h"
 namespace Platform::GUI
@@ -14,6 +15,7 @@ namespace Platform::GUI
         virtual void Run() override;
         void Swap();
         void MakeCurrent();
+        void ExecuteWithCurrentContext(std::function<void(void)> callback);
         typedef void* GL_CONTEXT;
     protected:
         virtual void OnRender();
@@ -22,8 +24,10 @@ namespace Platform::GUI
     private:
         GL_CONTEXT mGlContext;
         std::thread renderThread;
+        std::mutex mutexContext;
         bool isRunning = true;
     };
+    
            
 
 } 

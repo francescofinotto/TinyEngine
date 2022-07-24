@@ -1,5 +1,6 @@
 #include <iostream>
 #include <thread>
+#include <mutex>
 #include <Windows.h>
 #include <GL/gl.h>
 #include "../include/WindowsOpenGLGUI.h"
@@ -85,9 +86,10 @@ namespace Platform::GUI
 				std::cout<<"Thread start"<<std::endl;
 				while(isRunning)
 				{
-					MakeCurrent();
-					OnRender();
-					Swap();
+					ExecuteWithCurrentContext([&](){
+						OnRender();
+						Swap();
+					});
 					std::this_thread::sleep_for(std::chrono::duration<float,std::milli>(10));
 				}
 				std::cout << "Thread end" << std::endl;
@@ -119,26 +121,11 @@ namespace Platform::GUI
 	}
 	void WindowsOpenGLGUI::SetupMessageHandlers()
 	{
-
-		// this->AddMessageHandler(WM_TIMER, [&](void *wp, void *lp)
-		// 						{
-		// 							RedrawWindow(reinterpret_cast<HWND>(this->GetWindowHandler()),nullptr,nullptr,RDW_INVALIDATE);
-		// 							// Swap();
-		// 						});
 		this->AddMessageHandler(WM_SIZE, [&](void *wp, void *lp)
 								{
 									OnResize(wp, lp);
 								});
 
-		// this->AddMessageHandler(WM_PAINT, [&](void *wp, void *lp)
-		// 						{
-		// 							// HDC hdc = GetDC(reinterpret_cast<HWND>(this->GetWindowHandler()));
-		// 							// PAINTSTRUCT ps;
-		// 							// hdc = BeginPaint(reinterpret_cast<HWND>(this->GetWindowHandler()), &ps);
-
-		// 							// EndPaint(reinterpret_cast<HWND>(this->GetWindowHandler()), &ps);
-		// 							// ReleaseDC(reinterpret_cast<HWND>(this->GetWindowHandler()),hdc);
-		// 						});
 	}
 	void WindowsOpenGLGUI::OnDestroy()
 	{
@@ -156,11 +143,18 @@ namespace Platform::GUI
 		wglMakeCurrent(hdc, reinterpret_cast<HGLRC>(mGlContext));
 		ReleaseDC(reinterpret_cast<HWND>(this->GetWindowHandler()),hdc);
 	}
+	void WindowsOpenGLGUI::ExecuteWithCurrentContext(std::function<void(void)> callback)
+    {
+        std::lock_guard<std::mutex> lock{mutexContext};
+		MakeCurrent();
+		callback();
+    }
 	void WindowsOpenGLGUI::OnResize(void *wp, void *lp)
 	{
 		UINT width = LOWORD(lp);
 		UINT height = HIWORD(lp);
-		MakeCurrent();
-		glViewport(0, 0, width, height);
+		ExecuteWithCurrentContext([&](){
+			glViewport(0, 0, width, height);
+		});
 	}
 } // namespace Platform::GUI

@@ -2,21 +2,34 @@
 
 namespace Common::Threading
 {
-    GUILoopThread::GUILoopThread(std::function<void(void)> updateAction):isRunning(true)
+    GUILoopThread::GUILoopThread(std::optional<std::function<void(void)>> updateAction):isRunning(true)
     {
-        loopThread = std::thread([&](){
+        if(updateAction.has_value())
+        mLoopThread = std::make_unique<std::thread>([&](){
             while(isRunning) 
             {
                 CheckForActionsAndExecute();
-                updateAction();
+                updateAction.value();
             }
         });
     }
+    GUILoopThread::GUILoopThread(GUILoopThread&& other)
+    {
+        mLoopThread = std::move(other.mLoopThread);
+        mActions = std::move(other.mActions);
 
+    }
+    GUILoopThread& GUILoopThread::operator=(GUILoopThread &&other)
+    {
+        mLoopThread = std::move(other.mLoopThread);
+        mActions = std::move(other.mActions);
+        return *this;
+    }
+      
     GUILoopThread::~GUILoopThread()
     {
         isRunning = false;
-        loopThread.join();
+        mLoopThread->join();
     }
         
     void GUILoopThread::InvokeOnGUIThread(std::function<void(void)> action)

@@ -8,7 +8,7 @@
 namespace Platform::GUI
 {
 
-	WindowsOpenGLGUI::WindowsOpenGLGUI()
+	WindowsOpenGLGUI::WindowsOpenGLGUI():mRenderThread(std::optional<std::function<void()>>())
 	{
 		PIXELFORMATDESCRIPTOR pfd =
 			{
@@ -35,7 +35,7 @@ namespace Platform::GUI
 		letWindowsChooseThisPixelFormat = ChoosePixelFormat(hdc, &pfd);
 		SetPixelFormat(hdc, letWindowsChooseThisPixelFormat, &pfd);
 		mGlContext = static_cast<void *>(wglCreateContext(hdc));
-		ReleaseDC(reinterpret_cast<HWND>(this->GetWindowHandler()),hdc);
+		ReleaseDC(reinterpret_cast<HWND>(this->GetWindowHandler()), hdc);
 		SetupMessageHandlers();
 	}
 
@@ -49,53 +49,64 @@ namespace Platform::GUI
 	{
 	}
 	void WindowsOpenGLGUI::Run()
-    {
-
-		renderThread = std::thread(
+	{
+		mRenderThread = std::move(Common::Threading::GUILoopThread(std::function<void()>(
 			[&]()
 			{
-				std::cout<<"Thread start"<<std::endl;
-				while(isRunning)
+				std::cout << "Thread start" << std::endl;
+				while (isRunning)
 				{
-					ExecuteWithCurrentContext([&](){
-						OnRender();
-						Swap();
-					});
-					std::this_thread::sleep_for(std::chrono::duration<float,std::milli>(10));
+					ExecuteWithCurrentContext([&]()
+											{
+							OnRender();
+							Swap(); });
+					std::this_thread::sleep_for(std::chrono::duration<float, std::milli>(10));
 				}
 				std::cout << "Thread end" << std::endl;
-			});
+			}
+		)));
+		// renderThread = std::thread(
+		// 	[&]()
+		// 	{
+		// 		std::cout<<"Thread start"<<std::endl;
+		// 		while(isRunning)
+		// 		{
+		// 			ExecuteWithCurrentContext([&](){
+		// 				OnRender();
+		// 				Swap();
+		// 			});
+		// 			std::this_thread::sleep_for(std::chrono::duration<float,std::milli>(10));
+		// 		}
+		// 		std::cout << "Thread end" << std::endl;
+		// 	});
 		WindowsGUI::Run();
 	}
 	void WindowsOpenGLGUI::OnRender()
 	{
-		static float rotation = 0;
+			static float rotation = 0;
 
-		glClearColor(0, 0, 1, 1);
-		glClear(GL_COLOR_BUFFER_BIT);
+			glClearColor(0, 0, 1, 1);
+			glClear(GL_COLOR_BUFFER_BIT);
 
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+			glRotatef(rotation, 0, 1, 0);
+			rotation += 1;
 
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		glRotatef(rotation, 0, 1, 0);
-		rotation += 1;
-		
-		glBegin(GL_TRIANGLES);
-		glVertex2f(-0.5f, -0.5f);
-		glColor3f(1.0f,0.0f,0.0f);
-		glVertex2f(0.0f, .5f);
-		glColor3f(0.0f,1.0f,0.0f);
-		glVertex2f(0.5f, -0.5f);
-		glColor3f(0.0f, 0.0f, 1.0f);
-		glEnd();
+			glBegin(GL_TRIANGLES);
+			glVertex2f(-0.5f, -0.5f);
+			glColor3f(1.0f, 0.0f, 0.0f);
+			glVertex2f(0.0f, .5f);
+			glColor3f(0.0f, 1.0f, 0.0f);
+			glVertex2f(0.5f, -0.5f);
+			glColor3f(0.0f, 0.0f, 1.0f);
+			glEnd();
 
 	}
 	void WindowsOpenGLGUI::SetupMessageHandlers()
 	{
-		this->AddMessageHandler(WM_SIZE, [&](void *wp, void *lp)
-								{
-									OnResize(wp, lp);
-								});
+			this->AddMessageHandler(WM_SIZE, [&](void *wp, void *lp)
+									{ OnResize(wp, lp); });
 
 	}
 	void WindowsOpenGLGUI::OnDestroy()
@@ -104,29 +115,28 @@ namespace Platform::GUI
 
 	void WindowsOpenGLGUI::Swap()
 	{
-		HDC hdc = GetDC(reinterpret_cast<HWND>(this->GetWindowHandler()));
-		SwapBuffers(hdc);
-		ReleaseDC(reinterpret_cast<HWND>(this->GetWindowHandler()),hdc);
+			HDC hdc = GetDC(reinterpret_cast<HWND>(this->GetWindowHandler()));
+			SwapBuffers(hdc);
+			ReleaseDC(reinterpret_cast<HWND>(this->GetWindowHandler()), hdc);
 	}
 	void WindowsOpenGLGUI::MakeCurrent()
 	{
-		HDC hdc = GetDC(reinterpret_cast<HWND>(this->GetWindowHandler()));
-		wglMakeCurrent(hdc, reinterpret_cast<HGLRC>(mGlContext));
-		ReleaseDC(reinterpret_cast<HWND>(this->GetWindowHandler()),hdc);
+			HDC hdc = GetDC(reinterpret_cast<HWND>(this->GetWindowHandler()));
+			wglMakeCurrent(hdc, reinterpret_cast<HGLRC>(mGlContext));
+			ReleaseDC(reinterpret_cast<HWND>(this->GetWindowHandler()), hdc);
 	}
 	void WindowsOpenGLGUI::ExecuteWithCurrentContext(std::function<void(void)> callback)
     {
-        std::lock_guard<std::mutex> lock{mutexContext};
-		MakeCurrent();
-		callback();
-		wglMakeCurrent(nullptr,nullptr);
+			std::lock_guard<std::mutex> lock{mutexContext};
+			MakeCurrent();
+			callback();
+			wglMakeCurrent(nullptr, nullptr);
     }
 	void WindowsOpenGLGUI::OnResize(void *wp, void *lp)
 	{
-		UINT width = LOWORD(lp);
-		UINT height = HIWORD(lp);
-		ExecuteWithCurrentContext([&](){
-			glViewport(0, 0, width, height);
-		});
+			UINT width = LOWORD(lp);
+			UINT height = HIWORD(lp);
+			ExecuteWithCurrentContext([&]()
+									  { glViewport(0, 0, width, height); });
 	}
-} // namespace Platform::GUI
+	} // namespace Platform::GUI

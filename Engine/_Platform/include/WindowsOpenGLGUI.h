@@ -23,7 +23,7 @@ namespace Platform::GUI
         virtual void OnResize(void* wp,void* lp);
         void SetupMessageHandlers();
     private:
-        Common::Threading::GUILoopThread mRenderThread;
+        // Common::Threading::GUILoopThread mRenderThread;
         GL_CONTEXT mGlContext;
         std::thread renderThread;
         std::mutex mutexContext;

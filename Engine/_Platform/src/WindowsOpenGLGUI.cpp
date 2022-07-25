@@ -8,7 +8,7 @@
 namespace Platform::GUI
 {
 
-	WindowsOpenGLGUI::WindowsOpenGLGUI():mRenderThread(std::optional<std::function<void()>>())
+	WindowsOpenGLGUI::WindowsOpenGLGUI()
 	{
 		PIXELFORMATDESCRIPTOR pfd =
 			{
@@ -50,35 +50,35 @@ namespace Platform::GUI
 	}
 	void WindowsOpenGLGUI::Run()
 	{
-		mRenderThread = std::move(Common::Threading::GUILoopThread(std::function<void()>(
-			[&]()
-			{
-				std::cout << "Thread start" << std::endl;
-				while (isRunning)
-				{
-					ExecuteWithCurrentContext([&]()
-											{
-							OnRender();
-							Swap(); });
-					std::this_thread::sleep_for(std::chrono::duration<float, std::milli>(10));
-				}
-				std::cout << "Thread end" << std::endl;
-			}
-		)));
-		// renderThread = std::thread(
+		// mRenderThread = std::move(Common::Threading::GUILoopThread(std::function<void()>(
 		// 	[&]()
 		// 	{
-		// 		std::cout<<"Thread start"<<std::endl;
-		// 		while(isRunning)
+		// 		std::cout << "Thread start" << std::endl;
+		// 		while (isRunning)
 		// 		{
-		// 			ExecuteWithCurrentContext([&](){
-		// 				OnRender();
-		// 				Swap();
-		// 			});
-		// 			std::this_thread::sleep_for(std::chrono::duration<float,std::milli>(10));
+		// 			ExecuteWithCurrentContext([&]()
+		// 									{
+		// 					OnRender();
+		// 					Swap(); });
+		// 			std::this_thread::sleep_for(std::chrono::duration<float, std::milli>(10));
 		// 		}
 		// 		std::cout << "Thread end" << std::endl;
-		// 	});
+		// 	}
+		// )));
+		renderThread = std::thread(
+			[&]()
+			{
+				std::cout<<"Thread start"<<std::endl;
+				while(isRunning)
+				{
+					ExecuteWithCurrentContext([&](){
+						OnRender();
+						Swap();
+					});
+					std::this_thread::sleep_for(std::chrono::duration<float,std::milli>(10));
+				}
+				std::cout << "Thread end" << std::endl;
+			});
 		WindowsGUI::Run();
 	}
 	void WindowsOpenGLGUI::OnRender()

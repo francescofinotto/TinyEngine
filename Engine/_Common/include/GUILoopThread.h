@@ -7,20 +7,21 @@
 namespace Common::Threading
 {
 
-    class GUILoopThread
+    class GUILoopThread final
     {
     public:
-        GUILoopThread(std::optional<std::function<void(void)>> updateAction);
+        GUILoopThread(std::function<void(void)> updateAction);
         ~GUILoopThread();
-        GUILoopThread(GUILoopThread &&other);
-        GUILoopThread& operator=(GUILoopThread &&other); 
+
         void InvokeOnGUIThread(std::function<void(void)> action);
     private:
+        void UpdateLoop();
         void CheckForActionsAndExecute();
         std::stack<std::function<void(void)>> mActions;
+        std::function<void(void)> updateAction;
         std::mutex mMutexActions;
-        std::unique_ptr<std::thread> mLoopThread;
+        std::thread mLoopThread;
         bool isRunning;
-    }; 
+    };  
 
 }

@@ -1,45 +1,25 @@
 #include "../include/GUILoopThread.h"
-
+#include <iostream>
 namespace Common::Threading
 {
-    GUILoopThread::GUILoopThread(std::optional<std::function<void(void)>> updateAction):isRunning(true)
-    {
-        if(updateAction.has_value())
-        mLoopThread = std::make_unique<std::thread>([&](){
-            while(isRunning) 
-            {
-                CheckForActionsAndExecute();
-                updateAction.value();
-            }
-        });
-    }
-    GUILoopThread::GUILoopThread(GUILoopThread&& other)
-    {
-        mLoopThread = std::move(other.mLoopThread);
-        mActions = std::move(other.mActions);
+    GUILoopThread::GUILoopThread(std::function<void(void)>updateAction)
+        :updateAction{updateAction},isRunning{true}, mLoopThread{std::thread(std::bind(&GUILoopThread::UpdateLoop,this))}
+    {}
 
-    }
-    GUILoopThread& GUILoopThread::operator=(GUILoopThread &&other)
-    {
-        mLoopThread = std::move(other.mLoopThread);
-        mActions = std::move(other.mActions);
-        return *this;
-    }
-      
     GUILoopThread::~GUILoopThread()
     {
         isRunning = false;
-        mLoopThread->join();
+        mLoopThread.join();
     }
         
     void GUILoopThread::InvokeOnGUIThread(std::function<void(void)> action)
     {
-        std::lock_guard<std::mutex> lock(this->mMutexActions);
+        std::lock_guard<std::mutex> lock(mMutexActions);
         mActions.push(action);
     }
     void GUILoopThread::CheckForActionsAndExecute()
     {
-        std::lock_guard<std::mutex> lock(this->mMutexActions);
+        std::lock_guard<std::mutex> lock(mMutexActions);
         while (!mActions.empty())
         {
             auto& action = mActions.top();
@@ -48,4 +28,14 @@ namespace Common::Threading
         }
         
     }
+    void GUILoopThread::UpdateLoop()
+    {
+        while(isRunning) 
+        {
+            CheckForActionsAndExecute();
+            updateAction();
+        }
+        std::cout<<"Exit thread"<<std::this_thread::get_id<<std::endl;
+    }
+     
 }

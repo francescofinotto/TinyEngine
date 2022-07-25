@@ -3,6 +3,7 @@
 #include <mutex>
 #include <memory>
 #include "WindowsGUI.h"
+#include "GUILoopThread.h"
 namespace Platform::GUI
 {
     class WindowsOpenGLGUI : public WindowsGUI

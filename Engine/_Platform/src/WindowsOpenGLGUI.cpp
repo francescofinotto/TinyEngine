@@ -36,7 +36,6 @@ namespace Platform::GUI
 		SetPixelFormat(hdc, letWindowsChooseThisPixelFormat, &pfd);
 		mGlContext = static_cast<void *>(wglCreateContext(hdc));
 		ReleaseDC(reinterpret_cast<HWND>(this->GetWindowHandler()),hdc);
-		//SetTimer(static_cast<HWND>(this->GetWindowHandler()), 1001, (UINT)(1.0f / 60), (TIMERPROC)NULL);
 		SetupMessageHandlers();
 	}
 
@@ -48,34 +47,6 @@ namespace Platform::GUI
 
 	void WindowsOpenGLGUI::OnAfterCreation()
 	{
-		// PIXELFORMATDESCRIPTOR pfd =
-		// 	{
-		// 		sizeof(PIXELFORMATDESCRIPTOR),
-		// 		1,
-		// 		PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER, // Flags
-		// 		PFD_TYPE_RGBA,												// The kind of framebuffer. RGBA or palette.
-		// 		32,															// Colordepth of the framebuffer.
-		// 		0, 0, 0, 0, 0, 0,
-		// 		0,
-		// 		0,
-		// 		0,
-		// 		0, 0, 0, 0,
-		// 		24, // Number of bits for the depthbuffer
-		// 		8,	// Number of bits for the stencilbuffer
-		// 		0,	// Number of Aux buffers in the framebuffer.
-		// 		PFD_MAIN_PLANE,
-		// 		0,
-		// 		0, 0, 0};
-
-		// HDC hdc = GetDC(reinterpret_cast<HWND>(this->GetWindowHandler()));
-
-		// int letWindowsChooseThisPixelFormat;
-		// letWindowsChooseThisPixelFormat = ChoosePixelFormat(hdc, &pfd);
-		// SetPixelFormat(hdc, letWindowsChooseThisPixelFormat, &pfd);
-		// mGlContext = static_cast<void *>(wglCreateContext(hdc));
-		// ReleaseDC(reinterpret_cast<HWND>(this->GetWindowHandler()),hdc);
-		// //SetTimer(static_cast<HWND>(this->GetWindowHandler()), 1001, (UINT)(1.0f / 60), (TIMERPROC)NULL);
-		// SetupMessageHandlers();
 	}
 	void WindowsOpenGLGUI::Run()
     {
